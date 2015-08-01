@@ -3,6 +3,60 @@ import pygame
 from pygame.locals import *
 
 #-----------------------------------------------------------------------------
+#pacman class
+class Pacman(object):
+    def __init__(self, dim, pos):
+        self.dim = dim
+        self.pos = pos
+        self.COLOR = (255,255,0)
+        self.direction = 'LEFT'
+
+    def collide(self, other):
+        xcollide = axis_overlap(self.pos[0], self.dim[0], other.pos[0], other.dim[0])
+        ycollide = axis_overlap(self.pos[1], self.dim[1], other.pos[1], other.dim[1])
+        if xcollide & ycollide:
+            if self.direction is 'UP':
+                self.pos[1] = other.pos[1]+other.dim[1]
+            elif self.direction is 'DOWN':
+                self.pos[1] = other.pos[1]-self.dim[1]
+            elif self.direction is 'LEFT':
+                self.pos[0] = other.pos[0]+other.dim[0]
+            elif self.direction is 'RIGHT':
+                self.pos[0] = other.pos[0]-self.dim[0]
+
+    def move(self):
+        key_pressed = pygame.key.get_pressed()
+        if key_pressed[K_UP]:
+            self.pos[1] -= 3
+            self.direction = 'UP'
+        elif key_pressed[K_DOWN]:
+            self.pos[1] += 3
+            self.direction = 'DOWN'
+        elif key_pressed[K_LEFT]:
+            self.pos[0] -= 3
+            self.direction = 'LEFT'
+        elif key_pressed[K_RIGHT]:
+            self.pos[0] += 3
+            self.direction = 'RIGHT'
+
+    def draw(self, screen):
+        values = list(self.pos)+list(self.dim)
+        pygame.draw.rect(screen, self.COLOR, values)
+#----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+#Tile class
+class Tile(object):
+    def __init__(self, dim, pos=[0,0]):
+        self.dim = dim
+        self.pos = pos
+        self.COLOR = (255,0,0)
+
+    def draw(self, screen):
+        values = list(self.pos)+list(self.dim)
+        pygame.draw.rect(screen, self.COLOR, values)
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
 #function to check collisions using SAT(separating axis theorem)
 def axis_overlap(p1, length1, p2, length2):
     collided = False
@@ -18,49 +72,22 @@ def axis_overlap(p1, length1, p2, length2):
 #------------------------------------------------------------------------------
 
 pygame.init()
-width, height = (50,50)
 SCREEN_SIZE = (900, 600)
 screen = pygame.display.set_mode(SCREEN_SIZE, 0, 32)
-x,y = (500,200)
-x2,y2,width2,height2 = (150,150,150,100)
 background = pygame.surface.Surface(SCREEN_SIZE).convert()
 background.fill((0,0,0))
-direction = 'LEFT'
+
+
+pacman = Pacman((50,50), [500,200])
+tile = Tile((150,150), [150,100])
 
 while True:
-    key_pressed = pygame.key.get_pressed()
     for event in pygame.event.get():
         if event.type == QUIT:
             exit()
-    if key_pressed[K_UP]:
-        y -= 1
-        direction = 'UP'
-    elif key_pressed[K_DOWN]:
-        y += 1
-        direction = 'DOWN'
-    elif key_pressed[K_LEFT]:
-        x -= 1
-        direction = 'LEFT'
-    elif key_pressed[K_RIGHT]:
-        x += 1
-        direction = 'RIGHT'
-
-    xycollide = False
-    xcollide = axis_overlap(x,width,x2,width2)
-    ycollide = axis_overlap(y,height,y2,height2)
-    xycollide = xcollide & ycollide
-    if xycollide:
-        if direction is 'UP':
-            y = y2+height2
-        elif direction is 'DOWN':
-            y = y2-height
-        elif direction is 'LEFT':
-            x = x2+width2
-        elif direction is 'RIGHT':
-            x = x2-width
-
+    pacman.move()
+    pacman.collide(tile)
     screen.blit(background, (0,0))
-    pygame.draw.rect(screen, (255,0,0),[x2,y2,width2,height2])
-    pygame.draw.rect(screen, (255,255,0),[x,y,width,height])
+    tile.draw(screen)
+    pacman.draw(screen)
     pygame.display.update()
-
