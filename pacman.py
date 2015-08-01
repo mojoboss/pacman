@@ -1,13 +1,13 @@
 __author__ = 'starlord'
 import pygame
 from pygame.locals import *
+from entity import AbstractEntity
 
 #-----------------------------------------------------------------------------
 #pacman class
-class Pacman(object):
+class Pacman(AbstractEntity):
     def __init__(self, dim, pos):
-        self.dim = dim
-        self.pos = pos
+        AbstractEntity.__init__(self, dim, pos)
         self.COLOR = (255,255,0)
         self.direction = 'LEFT'
 
@@ -39,9 +39,6 @@ class Pacman(object):
             self.pos[0] += 3
             self.direction = 'RIGHT'
 
-    def draw(self, screen):
-        values = list(self.pos)+list(self.dim)
-        pygame.draw.rect(screen, self.COLOR, values)
 #----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
 #function to check collisions using SAT(separating axis theorem)
