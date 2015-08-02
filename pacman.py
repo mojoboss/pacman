@@ -27,17 +27,19 @@ class Pacman(AbstractEntity):
     def move(self):
         key_pressed = pygame.key.get_pressed()
         if key_pressed[K_UP]:
-            self.pos.y -= 3
+            self.pos.y -= 2
             self.direction = 'UP'
         elif key_pressed[K_DOWN]:
-            self.pos.y += 3
+            self.pos.y += 2
             self.direction = 'DOWN'
         elif key_pressed[K_LEFT]:
-            self.pos.x -= 3
+            self.pos.x -= 2
             self.direction = 'LEFT'
         elif key_pressed[K_RIGHT]:
-            self.pos.x += 3
+            self.pos.x += 2
             self.direction = 'RIGHT'
+        #print (self.pos.x, self.pos.y)
+        #print '\n'
 
 #----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
