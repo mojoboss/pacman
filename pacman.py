@@ -23,9 +23,36 @@ class Pacman(AbstractEntity):
                 self.pos.x = other.pos.x+other.dim[0]
             elif self.direction is 'RIGHT':
                 self.pos.x = other.pos.x-self.dim[0]
-
-    def move(self):
+#test++++++++++++++++++++++++++++
+    def set_direction(self):
         key_pressed = pygame.key.get_pressed()
+        if key_pressed[K_UP]:
+            self.direction = 'UP'
+        elif key_pressed[K_DOWN]:
+            self.direction = 'DOWN'
+        elif key_pressed[K_LEFT]:
+            self.direction = 'LEFT'
+        elif key_pressed[K_RIGHT]:
+            self.direction = 'RIGHT'
+        return self.direction
+
+    def set_vel(self):
+        direct = self.set_direction()
+        if(direct == 'UP'):
+            return (0, -2)
+        elif(direct == 'DOWN'):
+            return (0, 2)
+        if(direct == 'LEFT'):
+            return (-2, 0)
+        if(direct == 'RIGHT'):
+            return (2, 0)
+#+++++++++++++++++++++++++++++++++++
+    def move(self):
+        vel = self.set_vel()
+        self.pos.x += vel[0]
+        self.pos.y += vel[1]
+
+        '''
         if key_pressed[K_UP]:
             self.pos.y -= 2
             self.direction = 'UP'
@@ -38,6 +65,7 @@ class Pacman(AbstractEntity):
         elif key_pressed[K_RIGHT]:
             self.pos.x += 2
             self.direction = 'RIGHT'
+        '''
         #print (self.pos.x, self.pos.y)
         #print '\n'
 

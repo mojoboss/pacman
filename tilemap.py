@@ -8,7 +8,7 @@ from pygame.locals import *
 
 
 pygame.init()
-layout = numpy.loadtxt('tilemap_test.txt', dtype=str)
+layout = numpy.loadtxt('tilemap_test2.txt', dtype=str)
 row, col = layout.shape
 width, height = (16, 16)
 
@@ -24,9 +24,9 @@ for i in range(row):
             pos = (i*width, j*height)
             tiles.append(Tile((width, height), pos))
 
-pacman = Pacman((width-6,height-6), [4*width,2*height])
+pacman = Pacman((width,height), [4*width,2*height])
 
-
+#print layout
 background = pygame.surface.Surface(SCREEN_SIZE).convert()
 background.fill((0,0,0))
 
