@@ -10,6 +10,7 @@ class Pacman(AbstractEntity):
         AbstractEntity.__init__(self, dim, pos)
         self.COLOR = (255,255,0)
         self.direction = 'LEFT'
+        self.vel_stack=[]
 
     def collide(self, other):
         xcollide = axis_overlap(self.pos.x, self.dim[0], other.pos.x, other.dim[0])
@@ -23,6 +24,11 @@ class Pacman(AbstractEntity):
                 self.pos.x = other.pos.x+other.dim[0]
             elif self.direction is 'RIGHT':
                 self.pos.x = other.pos.x-self.dim[0]
+            self.vel_stack.pop()
+            if self.vel_stack:
+                self.direction = self.vel_stack[-1][1]
+
+
 #test++++++++++++++++++++++++++++
     def set_direction(self):
         key_pressed = pygame.key.get_pressed()
@@ -39,37 +45,26 @@ class Pacman(AbstractEntity):
     def set_vel(self):
         direct = self.set_direction()
         if(direct == 'UP'):
-            return (0, -2)
+            v= (0, -2)
         elif(direct == 'DOWN'):
-            return (0, 2)
+            v= (0, 2)
         if(direct == 'LEFT'):
-            return (-2, 0)
+            v= (-2, 0)
         if(direct == 'RIGHT'):
-            return (2, 0)
+            v= (2, 0)
+        if (v, direct) not in self.vel_stack:
+            self.vel_stack.append((v, direct))
+        return self.vel_stack
 #+++++++++++++++++++++++++++++++++++
     def move(self):
         vel = self.set_vel()
-        self.pos.x += vel[0]
-        self.pos.y += vel[1]
-
-        '''
-        if key_pressed[K_UP]:
-            self.pos.y -= 2
-            self.direction = 'UP'
-        elif key_pressed[K_DOWN]:
-            self.pos.y += 2
-            self.direction = 'DOWN'
-        elif key_pressed[K_LEFT]:
-            self.pos.x -= 2
-            self.direction = 'LEFT'
-        elif key_pressed[K_RIGHT]:
-            self.pos.x += 2
-            self.direction = 'RIGHT'
-        '''
+        v = vel[-1][0]
+        self.pos.x += v[0]
+        self.pos.y += v[1]
         #print (self.pos.x, self.pos.y)
         #print '\n'
-
 #----------------------------------------------------------------------------
+
 #-----------------------------------------------------------------------------
 #function to check collisions using SAT(separating axis theorem)
 def axis_overlap(p1, length1, p2, length2):
