@@ -38,8 +38,6 @@ while True:
     screen.blit(background, (0,0))
     for t in tiles:
         t.draw(screen)
-    pacman.move()
-    for t in tiles:
-        pacman.collide(t)
+    pacman.changeDirection(tiles)
     pacman.draw(screen)
     pygame.display.update()
