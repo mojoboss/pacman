@@ -43,6 +43,7 @@ class Pacman(AbstractEntity):
         if self.direction_stack.peek() is not self.direction:
             self.direction_stack.push(self.direction)
         while len(self.direction_stack.items) > 0:
+            collided = False
             self.direction = self.direction_stack.pop()
             self.move()
             for tile in tilelist:
