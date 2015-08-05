@@ -34,6 +34,11 @@ class NodeGroup(object):
                 if pos:
                     self.nodelist[i].neighbors.append(self.find_node_from_pos(self.nodelist, pos))
 
+        #this is to set valid direcrions accessible from any given node
+        for node in self.nodelist:
+            node.validDirections()
+        #==============================================================
+
         return self.nodelist
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #method to find the pos of the neighbor in a given direction

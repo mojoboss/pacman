@@ -7,3 +7,9 @@ class Node(object):
         self.position = Vector2D(self.col*width, self.row*height)
         self.neighbors = []
         self.target = None
+        self.directions = []
+
+    def validDirections(self):
+        for node in self.neighbors:
+            tempvec = node.position - self.position
+            self.directions.append(tempvec.normalize())
