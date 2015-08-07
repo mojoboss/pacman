@@ -7,14 +7,6 @@ class NodeGroup(object):
         self.width = width
         self.height = height
 
-    def getNode(self, row, col):
-        '''Input a list of nodes, and the row and col integers.  Returns
-        the Node object located at that grid position.'''
-        for node in self.nodelist:
-            if node.row == row and node.col == col:
-                return node
-        return None
-
     def createNodeList(self, filename):
         '''Create the list of nodes from a text file'''
         layout = numpy.loadtxt(filename, dtype = str)
@@ -22,7 +14,7 @@ class NodeGroup(object):
         for row in range(rows):
             for col in range(cols):
                 if layout[row][col] == '+':
-                    self.nodelist.append(Node((col,row), self.width,
+                    self.nodelist.append(Node((col, row), self.width,
                                               self.height))
 
         #remaining part to include neighbours
@@ -43,7 +35,7 @@ class NodeGroup(object):
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #method to find the pos of the neighbor in a given direction
     def find_neighbors_pos(self, node, direction, layout):
-        x, y = node.row, node.col
+        y, x = node.x, node.y
         if (direction == 'Right'):
             while True:
                 try:
@@ -52,7 +44,7 @@ class NodeGroup(object):
                     if (char == '-'):
                         pass
                     elif (char == '+'):
-                        return x, y
+                        return y, x
                     elif (char == '0'):
                         return None
                 except IndexError:
@@ -65,7 +57,7 @@ class NodeGroup(object):
                     if (char == '-'):
                         pass
                     elif (char == '+'):
-                        return x, y
+                        return y, x
                     elif (char == '0'):
                         return None
                 except IndexError:
@@ -75,10 +67,10 @@ class NodeGroup(object):
                 try:
                     y += 1
                     char = layout[x][y]
-                    if (char == '-'):
+                    if (char == '|'):
                         pass
                     elif (char == '+'):
-                        return x, y
+                        return y, x
                     elif (char == '0'):
                         return None
                 except IndexError:
@@ -88,10 +80,10 @@ class NodeGroup(object):
                 try:
                     y -= 1
                     char = layout[x][y]
-                    if (char == '-'):
+                    if (char == '|'):
                         pass
                     elif (char == '+'):
-                        return x, y
+                        return y, x
                     elif (char == '0'):
                         return None
                 except IndexError:
@@ -101,6 +93,6 @@ class NodeGroup(object):
     def find_node_from_pos(self, nodelist, pos):
         x, y = pos
         for n in nodelist:
-            if n.row==x and n.col==y:
+            if n.x==x and n.y==y:
                 return n
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
