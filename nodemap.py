@@ -2,18 +2,24 @@ __author__ = 'starlord'
 
 import pygame
 from pygame.locals import *
+import numpy
 from nodegroup import NodeGroup
 from pacman import Pacman
 from tilegroup import Tilegroup
 from time import sleep
 
-pygame.init()
-width, height = (32, 32)
+def getRowCol(filename):
+        layout = numpy.loadtxt(filename, dtype=str)
+        c, r = layout.shape
+        return r, c
 
-screen = pygame.display.set_mode((10*width, 10*height), 0, 32)
-background = pygame.surface.Surface((10*width,10*height)).convert()
+pygame.init()
+width, height = (16, 16)
+filename = 'tilemap_test2.txt'
+r, c = getRowCol(filename)
+screen = pygame.display.set_mode((r*width, c*height), 0, 32)
+background = pygame.surface.Surface((r*width,c*height)).convert()
 background.fill((0,0,0))
-filename = 'nodemap_test.txt'
 
 #code to add tiles in the screen
 tilegrp = Tilegroup(width, height)

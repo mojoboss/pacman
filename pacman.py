@@ -17,7 +17,7 @@ class Pacman(AbstractEntity):
         AbstractEntity.__init__(self, dim, pos)
         self.COLOR = (255,255,0)
         self.direction = Vector2D(0, 0)
-        self.speed = 0.40
+        self.speed = 0.80
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      def update(self, nodelist):
          #if pacman position is same as any node then detect for key pressing

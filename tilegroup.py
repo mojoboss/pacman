@@ -17,3 +17,4 @@ class Tilegroup(object):
                     pos = (i*self.width, j*self.height)
                     self.tilelist.append(Tile((self.width, self.height), pos))
         return self.tilelist
+
