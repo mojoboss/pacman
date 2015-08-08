@@ -14,10 +14,13 @@ background.fill((0,0,0))
 
 nodegrp = NodeGroup(width, height)
 nodes = nodegrp.createNodeList('nodemap_test.txt')
-
-
-
+pacman = Pacman((width/2,height/2), [nodes[3].position.x, nodes[3].position.y])
+'''
+for n in nodes:
+    print n.position.x
+'''
 while True:
+    #sleep(0.01)
     for event in pygame.event.get():
         if event.type == QUIT:
             exit()
@@ -27,5 +30,7 @@ while True:
     for node in nodes:
         for nextnode in node.neighbors:
             pygame.draw.line(screen,(255,255,255),node.position.toTuple(), nextnode.position.toTuple(), 2)
+    pacman.draw(screen)
+    pacman.update(nodes)
 
     pygame.display.update()
