@@ -15,9 +15,11 @@ background = pygame.surface.Surface((10*width,10*height)).convert()
 background.fill((0,0,0))
 filename = 'nodemap_test.txt'
 
+#code to add tiles in the screen
 tilegrp = Tilegroup(width, height)
 tiles = tilegrp.createTileList(filename)
 
+#nodes added, not displayed on the screen, only for navigation purpose
 nodegrp = NodeGroup(width, height)
 nodes = nodegrp.createNodeList(filename)
 
