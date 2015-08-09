@@ -47,9 +47,9 @@ while True:
         t.draw(screen)
 
     ghost1.draw(screen)
-    ghost1.move(pacman.pos, nodes)
+    ghost1.move(pacman.currentnode, nodes)
     ghost2.draw(screen)
-    ghost2.move(pacman.pos, nodes)
+    ghost2.move(pacman.currentnode, nodes)
 
     pacman.draw(screen)
     pacman.update(nodes)

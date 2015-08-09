@@ -3,7 +3,7 @@ import pygame
 from pygame.locals import *
 from entity import AbstractEntity
 from vectors import Vector2D
-
+from locatePacman import search_pacnode
 UP = Vector2D(0,-1)
 DOWN = Vector2D(0,1)
 LEFT = Vector2D(-1,0)
@@ -18,21 +18,25 @@ class Ghost(AbstractEntity):
         self.currentnode = node
         self.moving = False
 
-    def move(self, pacpos, nodelist):
+    def move(self, pacnode, nodelist):
         new_node = self.find_node(nodelist)
         if(new_node):
             self.currentnode = new_node
             self.moving = False
         if (not self.moving):
             node = self.currentnode
-            min_dist = Vector2D.magnitude(node.neighbors[0].position-pacpos)
-            index = 0
-            for i in range(len(node.neighbors)):
-                n = node.neighbors[i]
-                mdist = Vector2D.magnitude(n.position-pacpos)
-                if (mdist <= min_dist):
-                    index = i
-            self.direction = node.directions[index]
+            map = search_pacnode(node, pacnode)
+            child = pacnode
+            parent = pacnode
+            while True:
+                parent = map[child]
+                if (parent == node):
+                    break
+                else:
+                    child = parent
+            direct = child.position - parent.position
+            direct = direct.normalize()
+            self.direction = direct
             self.moving = True
 
         self.pos += self.direction*self.speed
