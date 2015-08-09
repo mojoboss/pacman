@@ -16,7 +16,7 @@ def getRowCol(filename):
 
 pygame.init()
 width, height = (16, 16)
-filename = 'tilemap_test2.txt'
+filename = 'tilemap_test.txt'
 r, c = getRowCol(filename)
 screen = pygame.display.set_mode((r*width, c*height), 0, 32)
 background = pygame.surface.Surface((r*width,c*height)).convert()
@@ -34,7 +34,7 @@ nodes = nodegrp.createNodeList(filename)
 ghost1 = Ghost(nodes[20], (255, 0, 0), (width,height), [nodes[20].position.x, nodes[20].position.y])
 ghost2 = Ghost(nodes[7], (155, 0, 250), (width,height), [nodes[7].position.x, nodes[7].position.y])
 
-pacman = Pacman((width,height), [nodes[3].position.x, nodes[3].position.y])
+pacman = Pacman(nodes[0], (width,height), [nodes[3].position.x, nodes[3].position.y])
 
 while True:
     #sleep(0.01)

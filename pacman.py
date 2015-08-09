@@ -13,16 +13,18 @@ RIGHT = Vector2D(1,0)
 #-----------------------------------------------------------------------------
 #pacman class
 class Pacman(AbstractEntity):
-     def __init__(self, dim, pos=(0,0)):
+     def __init__(self,node ,dim ,pos=(0,0)):
         AbstractEntity.__init__(self, dim, pos)
         self.COLOR = (255,255,0)
         self.direction = Vector2D(0, 0)
         self.speed = 0.80
+        self.currentnode = node
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      def update(self, nodelist):
          #if pacman position is same as any node then detect for key pressing
          node = self.find_node(nodelist)
          if(node):
+             self.currentnode = node
              key_pressed = pygame.key.get_pressed()
              if (key_pressed[K_UP] and UP in node.directions):
                  self.pos = node.position

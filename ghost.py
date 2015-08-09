@@ -14,12 +14,11 @@ class Ghost(AbstractEntity):
         AbstractEntity.__init__(self, dim, pos)
         self.COLOR = color
         self.direction = Vector2D(0, 0)
-        self.speed = 0.80
+        self.speed = 0.40
         self.currentnode = node
         self.moving = False
 
     def move(self, pacpos, nodelist):
-
         new_node = self.find_node(nodelist)
         if(new_node):
             self.currentnode = new_node
