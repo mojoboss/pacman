@@ -5,6 +5,7 @@ from pygame.locals import *
 import numpy
 from nodegroup import NodeGroup
 from pacman import Pacman
+from ghost import Ghost
 from tilegroup import Tilegroup
 from time import sleep
 
@@ -29,6 +30,10 @@ tiles = tilegrp.createTileList(filename)
 nodegrp = NodeGroup(width, height)
 nodes = nodegrp.createNodeList(filename)
 
+#ghost added
+ghost1 = Ghost(nodes[20], (255, 0, 0), (width,height), [nodes[20].position.x, nodes[20].position.y])
+ghost2 = Ghost(nodes[7], (155, 0, 250), (width,height), [nodes[7].position.x, nodes[7].position.y])
+
 pacman = Pacman((width,height), [nodes[3].position.x, nodes[3].position.y])
 
 while True:
@@ -40,6 +45,11 @@ while True:
 
     for t in tiles:
         t.draw(screen)
+
+    ghost1.draw(screen)
+    ghost1.move(pacman.pos, nodes)
+    ghost2.draw(screen)
+    ghost2.move(pacman.pos, nodes)
 
     pacman.draw(screen)
     pacman.update(nodes)
