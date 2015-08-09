@@ -3,22 +3,22 @@ import pygame
 from pygame.locals import *
 from entity import AbstractEntity
 from vectors import Vector2D
-from locatePacman import search_pacnode
+from locatePacman import *
 UP = Vector2D(0,-1)
 DOWN = Vector2D(0,1)
 LEFT = Vector2D(-1,0)
 RIGHT = Vector2D(1,0)
 
 class Ghost(AbstractEntity):
-    def __init__(self, node, color, dim, pos=(0,0)):
+    def __init__(self, speed, node, color, dim, pos=(0,0)):
         AbstractEntity.__init__(self, dim, pos)
         self.COLOR = color
         self.direction = Vector2D(0, 0)
-        self.speed = 0.80
+        self.speed = speed
         self.currentnode = node
         self.moving = False
 
-    def move(self, pacnode, nodelist):
+    def move(self, pacnode, nodelist, alg):
         new_node = self.find_node(nodelist)
         if(new_node):
             self.currentnode = new_node
@@ -28,7 +28,7 @@ class Ghost(AbstractEntity):
             keyerrorFlag = False
             #this is to catch keyerror exception, as child key is not present always
             try:
-                map = search_pacnode(node, pacnode)
+                map = search_pacnode_by_alg(node, pacnode, alg)
                 child = pacnode
                 parent = pacnode
                 while True:
