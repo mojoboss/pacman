@@ -14,7 +14,7 @@ class Ghost(AbstractEntity):
         AbstractEntity.__init__(self, dim, pos)
         self.COLOR = color
         self.direction = Vector2D(0, 0)
-        self.speed = 0.40
+        self.speed = 0.80
         self.currentnode = node
         self.moving = False
 
@@ -25,18 +25,27 @@ class Ghost(AbstractEntity):
             self.moving = False
         if (not self.moving):
             node = self.currentnode
-            map = search_pacnode(node, pacnode)
-            child = pacnode
-            parent = pacnode
-            while True:
-                parent = map[child]
-                if (parent == node):
-                    break
-                else:
-                    child = parent
-            direct = child.position - parent.position
-            direct = direct.normalize()
-            self.direction = direct
+            keyerrorFlag = False
+            #this is to catch keyerror exception, as child key is not present always
+            try:
+                map = search_pacnode(node, pacnode)
+                child = pacnode
+                parent = pacnode
+                while True:
+                    parent = map[child]
+                    if (parent == node):
+                        break
+                    else:
+                        child = parent
+            except:
+                keyerrorFlag = True
+
+            if not keyerrorFlag:
+                direct = child.position - parent.position
+                direct = direct.normalize()
+                self.direction = direct
+            else:
+                self.direction = Vector2D(0, 0)
             self.moving = True
 
         self.pos += self.direction*self.speed

@@ -1,6 +1,6 @@
 __author__ = 'starlord'
 import Queue
-#this method runs dfs on nodes graph and returns a python map of the form
+#this method runs bfs on nodes graph and returns a python map of the form
 #'map[child] = parent'
 def search_pacnode(ghostnode, pacnode):
     q = Queue.Queue()
