@@ -58,6 +58,8 @@ while True:
 
     for c in coins:
         if (pacman.coin_collide(c)):
+            pygame.mixer.music.load('sound.wav')
+            pygame.mixer.music.play(0)
             coins.remove(c)
 
     ghost1.draw(screen)
