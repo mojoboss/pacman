@@ -56,6 +56,10 @@ while True:
     for c in coins:
         c.draw(screen)
 
+    for c in coins:
+        if (pacman.coin_collide(c)):
+            coins.remove(c)
+
     ghost1.draw(screen)
     ghost1.move(pacman.currentnode, nodes, 'bfs')
     ghost2.draw(screen)

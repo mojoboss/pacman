@@ -19,7 +19,7 @@ class Pacman(AbstractEntity):
         self.direction = Vector2D(0, 0)
         self.speed = 0.80
         self.currentnode = node
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
      def update(self, nodelist):
          #if pacman position is same as any node then detect for key pressing
          node = self.find_node(nodelist)
@@ -54,7 +54,6 @@ class Pacman(AbstractEntity):
             key_pressed[K_RIGHT] and self.direction == LEFT):
             self.switchNodes()
 
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      #finds the  node just crossed by pacman
      def find_node(self, nodelist):
          for n in nodelist:
@@ -65,3 +64,23 @@ class Pacman(AbstractEntity):
     #function to reverse the direction of pacman in between nodes
      def switchNodes(self):
          self.direction *= -1
+
+     #code to test interaction with coins using SAT(separating axis theorem)
+     def coin_collide(self, other):
+        xcollide = axis_overlap(self.pos.x, self.dim[0], other.pos[0]-8, other.radius*2)
+        ycollide = axis_overlap(self.pos.y, self.dim[1], other.pos[1]-8, other.radius*2)
+        return xcollide & ycollide
+
+#-------------------------------------------------------------------------------------------------------------
+#function to check collisions using SAT(separating axis theorem)
+def axis_overlap(p1, length1, p2, length2):
+    collided = False
+    if (p1 > p2):
+        if (length1+length2 > p1+length1-p2):
+            collided = True
+    elif (p2 > p1):
+        if (length1+length2 > p2+length2-p1):
+            collided = True
+    elif(p1==p2):
+        collided = True
+    return collided
