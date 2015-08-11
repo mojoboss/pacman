@@ -17,7 +17,8 @@ def getRowCol(filename):
 
 pygame.init()
 width, height = (16, 16)
-filename = 'tilemap_test2.txt'
+filename = 'mazes/tenbyten.txt'
+filecoin = 'mazes/tenbytencoin.txt'
 r, c = getRowCol(filename)
 screen = pygame.display.set_mode((r*width, c*height), 0, 32)
 background = pygame.surface.Surface((r*width,c*height)).convert()
@@ -33,18 +34,22 @@ nodes = nodegrp.createNodeList(filename)
 
 #adding coins to our maze
 coingrp = Coingroup(width)
-coins = coingrp.createCoinList(filename)
+coins = coingrp.createCoinList(filecoin)
 
 #ghost added
-ghost1 = Ghost(0.8, nodes[25], (255, 0, 0), (width,height), [nodes[25].position.x, nodes[25].position.y])
-ghost2 = Ghost(0.4, nodes[7], (155, 30, 250), (width,height), [nodes[7].position.x, nodes[7].position.y])
-#ghost3 = Ghost(0.2, nodes[28], (255, 0, 130), (width,height), [nodes[28].position.x, nodes[28].position.y])
-#ghost4 = Ghost(0.1, nodes[9], (155, 130, 250), (width,height), [nodes[9].position.x, nodes[9].position.y])
-
+ghost1 = Ghost(0.1, nodes[5], (255, 0, 0), (width,height), [nodes[5].position.x, nodes[5].position.y])
+#pacman added
 pacman = Pacman(nodes[1], (width,height), [nodes[1].position.x, nodes[1].position.y])
-
+count=0
 while True:
-    #sleep(0.01)
+    #++++
+    #count+=1
+    #if count == 1000:
+    #    ghost1.scatter_ghost()
+    #elif count == 2000:
+    #    ghost1.scatter_ghost()
+    #    count = 0
+    #++++
     for event in pygame.event.get():
         if event.type == QUIT:
             exit()
@@ -58,22 +63,14 @@ while True:
 
     for c in coins:
         if (pacman.coin_collide(c)):
-            pygame.mixer.music.load('sound.wav')
+            pygame.mixer.music.load('sounds/sound.wav')
             pygame.mixer.music.play(0)
             coins.remove(c)
 
     ghost1.draw(screen)
     ghost1.move(pacman.currentnode, nodes, 'bfs')
-    ghost2.draw(screen)
-    ghost2.move(pacman.currentnode, nodes, 'bfs')
-    #ghost3.draw(screen)
-    #ghost3.move(pacman.currentnode, nodes, 'bfs')
-    #ghost4.draw(screen)
-    #ghost4.move(pacman.currentnode, nodes, 'bfs')
-
     pacman.draw(screen)
     pacman.update(nodes)
-
     pygame.display.update()
 
 

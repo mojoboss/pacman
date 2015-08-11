@@ -6,10 +6,10 @@ from entity import AbstractEntity
 from vectors import Vector2D
 
 
-UP = Vector2D(0,-1)
-DOWN = Vector2D(0,1)
-LEFT = Vector2D(-1,0)
-RIGHT = Vector2D(1,0)
+UP = Vector2D(0, -1)
+DOWN = Vector2D(0, 1)
+LEFT = Vector2D(-1, 0)
+RIGHT = Vector2D(1, 0)
 #-----------------------------------------------------------------------------
 #pacman class
 class Pacman(AbstractEntity):
@@ -17,7 +17,7 @@ class Pacman(AbstractEntity):
         AbstractEntity.__init__(self, dim, pos)
         self.COLOR = (255,255,0)
         self.direction = Vector2D(0, 0)
-        self.speed = 0.80
+        self.speed = 0.20
         self.currentnode = node
 
      def update(self, nodelist):

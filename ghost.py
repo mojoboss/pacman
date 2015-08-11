@@ -1,9 +1,8 @@
 __author__ = 'starlord'
-import pygame
-from pygame.locals import *
 from entity import AbstractEntity
 from vectors import Vector2D
 from locatePacman import *
+
 UP = Vector2D(0,-1)
 DOWN = Vector2D(0,1)
 LEFT = Vector2D(-1,0)
@@ -17,6 +16,7 @@ class Ghost(AbstractEntity):
         self.speed = speed
         self.currentnode = node
         self.moving = False
+        self.scatter = False
 
     def move(self, pacnode, nodelist, alg):
         new_node = self.find_node(nodelist)
@@ -55,3 +55,25 @@ class Ghost(AbstractEntity):
             if Vector2D.magnitude(self.pos-n.position) <= 0.1:
                 return n
          return None
+
+    #++++++METHOD FOR SCATTERING GHOSTS
+    def scatter_ghost(self):
+        if self.scatter == False:
+            self.scatter = True
+            self.speed = 0.1
+            return None
+        elif self.scatter == True:
+            self.scatter = False
+            self.speed = 0.2
+            return None
+
+    #without calling this method(and just calling move), just keeping the speed of ghost 0.4 also gives sacttering
+    #effect as its too slow
+    def ghost_movement(self, pacnode, nodelist, alg):
+        if not self.scatter:
+            self.move(pacnode, nodelist, alg)
+        else:
+            #ghost will move to resting zone for cooldown
+            randnode = nodelist[4]
+            self.move(randnode, nodelist, alg)
+    #++++++++
