@@ -17,7 +17,7 @@ class Pacman(AbstractEntity):
         AbstractEntity.__init__(self, dim, pos)
         self.COLOR = (255,255,0)
         self.direction = Vector2D(0, 0)
-        self.speed = 0.20
+        self.speed = 0.80
         self.currentnode = node
 
      def update(self, nodelist):
@@ -69,6 +69,11 @@ class Pacman(AbstractEntity):
      def coin_collide(self, other):
         xcollide = axis_overlap(self.pos.x, self.dim[0], other.pos[0]-8, other.radius*2)
         ycollide = axis_overlap(self.pos.y, self.dim[1], other.pos[1]-8, other.radius*2)
+        return xcollide & ycollide
+    #code to check interaction with ghosts
+     def ghost_collide(self, other):
+        xcollide = axis_overlap(self.pos.x, self.dim[0], other.pos.x, other.dim[0])
+        ycollide = axis_overlap(self.pos.y, self.dim[1], other.pos.y, other.dim[1])
         return xcollide & ycollide
 
 #-------------------------------------------------------------------------------------------------------------
