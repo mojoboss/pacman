@@ -46,12 +46,12 @@ pacman = Pacman(nodes[1], (width,height), [nodes[1].position.x, nodes[1].positio
 count=0
 while True:
     #++++
-    #count+=1
-    #if count == 1000:
-    #    ghost1.scatter_ghost()
-    #elif count == 2000:
-    #    ghost1.scatter_ghost()
-    #    count = 0
+    count+=1
+    from random import randint
+    if count == 2000:
+        i  = randint(0, len(ghosts)-1)
+        ghosts[i].scatter_ghost()
+        count = 0
     #++++
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -72,7 +72,7 @@ while True:
 
     for ghost in ghosts:
         ghost.draw(screen)
-        ghost.move(pacman.currentnode, nodes, 'bfs')
+        ghost.ghost_movement(pacman.currentnode, nodes, 'bfs')
 
     pacman.draw(screen)
     pacman.update(nodes)

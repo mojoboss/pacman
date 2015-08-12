@@ -56,15 +56,13 @@ class Ghost(AbstractEntity):
                 return n
          return None
 
-    #++++++METHOD FOR SCATTERING GHOSTS
+    #METHOD FOR SCATTERING GHOSTS
     def scatter_ghost(self):
         if self.scatter == False:
             self.scatter = True
-            self.speed = 0.1
             return None
         elif self.scatter == True:
             self.scatter = False
-            self.speed = 0.2
             return None
 
     #without calling this method(and just calling move), just keeping the speed of ghost 0.4 also gives sacttering
@@ -73,7 +71,14 @@ class Ghost(AbstractEntity):
         if not self.scatter:
             self.move(pacnode, nodelist, alg)
         else:
-            #ghost will move to resting zone for cooldown
-            randnode = nodelist[4]
-            self.move(randnode, nodelist, alg)
-    #++++++++
+            new_node = self.find_node(nodelist)
+            if(new_node):
+                self.currentnode = new_node
+                self.moving = False
+            if (not self.moving):
+                node = self.currentnode
+                from random import randint
+                direct_index = randint(0, len(node.directions)-1)
+                self.direction = node.directions[direct_index]
+                self.moving = True
+            self.pos += self.direction*self.speed
