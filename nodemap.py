@@ -73,7 +73,7 @@ while True:
     #++++
     count+=1
     from random import randint
-    if count == 2000:
+    if count == 20:
         i  = randint(0, len(ghosts)-1)
         ghosts[i].scatter_ghost()
         count = 0
