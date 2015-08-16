@@ -5,10 +5,10 @@ from pygame.locals import *
 import numpy
 from nodegroup import NodeGroup
 from pacman import Pacman
-from ghost import Ghost
 from tilegroup import Tilegroup
 from ghostgroup import Ghostgroup
 from coingroup import Coingroup
+from maze_env import Environment
 from time import sleep
 
 def getRowCol(filename):
@@ -18,8 +18,8 @@ def getRowCol(filename):
 
 pygame.init()
 width, height = (16, 16)
-maze_filename = 'mazes/tilemap_test.txt'
-coin_and_ghosts_filename = 'mazes/tilemap_test2.txt'
+maze_filename = 'mazes/t1.txt'
+coin_and_ghosts_filename = 'mazes/t2.txt'
 r, c = getRowCol(maze_filename)
 screen = pygame.display.set_mode((r*width, c*height), 0, 32)
 background = pygame.surface.Surface((r*width, c*height)).convert()
@@ -69,7 +69,9 @@ def game_start():
     count=0
 #-------------------------------------------------------------------------------------------
 game_start()
+#env = Environment(pacman, ghosts, nodes, coins)
 while True:
+    #print ghosts[0].currentnode.x, ghosts[0].currentnode.y
     #++++
     count+=1
     from random import randint
@@ -94,6 +96,8 @@ while True:
             pygame.mixer.music.load('sounds/sound.wav')
             pygame.mixer.music.play(0)
             coins.remove(c)
+            if (len(coins)==0):
+                game_start()
 
     for g in ghosts:
         if (pacman.ghost_collide(g)):

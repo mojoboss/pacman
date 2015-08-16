@@ -17,13 +17,15 @@ class Pacman(AbstractEntity):
         AbstractEntity.__init__(self, dim, pos)
         self.COLOR = (255,255,0)
         self.direction = Vector2D(0, 0)
-        self.speed = 0.80
+        self.speed = 0.20
         self.currentnode = node
 
      def update(self, nodelist):
          #if pacman position is same as any node then detect for key pressing
          node = self.find_node(nodelist)
          if(node):
+             #in q learning no need to check available dirs, as only valid dirs are in the dict
+             # don't forget to write self.pos = node.position when node is updated.
              self.currentnode = node
              key_pressed = pygame.key.get_pressed()
              if (key_pressed[K_UP] and UP in node.directions):
@@ -42,7 +44,6 @@ class Pacman(AbstractEntity):
              elif(self.direction not in node.directions):
                  self.pos = node.position
                  self.direction = Vector2D(0, 0)
-
          #code to update position
          self.pos += self.direction*self.speed
 

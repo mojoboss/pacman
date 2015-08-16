@@ -6,6 +6,7 @@ import pygame
 class Coin(object):
     def __init__(self, radius, pos=(0,0)):
         self.radius = radius/4
+        #here pos set bty coin group is the actual pixel coordinates
         self.pos = (pos[0]+8, pos[1]+8)
         self.COLOR = (255, 255, 255)
 
