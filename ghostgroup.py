@@ -17,7 +17,7 @@ class Ghostgroup:
                 valueg = ghost[j][i]
                 if (valuel == '+' and valueg == 'G'):
                     node = self.initial_node(nodes, i, j)
-                    self.ghostlist.append(Ghost(0.1, node, (255, 0, 0), (self.width, self.height),
+                    self.ghostlist.append(Ghost(3.2, node, (255, 0, 0), (self.width, self.height),
                                                 [node.position.x, node.position.y]))
 
         return self.ghostlist

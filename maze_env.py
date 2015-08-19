@@ -1,5 +1,6 @@
 __author__ = 'starlord'
 from vectors import Vector2D
+from random import random
 import math
 class Environment:
     def __init__(self, pacman, ghosts, nodes, coins):
@@ -8,13 +9,13 @@ class Environment:
         self.nodes = nodes
         self.coins = coins
         self.qdictionary = {}
-
+#--------------------------------------------------------------------------
     def set_params(self, pacman, ghosts, nodes, coins):
         self.pacman = pacman
         self.ghosts = ghosts
         self.nodes = nodes
         self.coins = coins
-
+#--------------------------------------------------------------------------
     def nearest_ghost(self):
         min_ghost = None
         min_dist = Vector2D.magnitude(self.pacman.pos - self.ghosts[0].pos)
@@ -24,6 +25,7 @@ class Environment:
                 min_ghost = g
                 min_dist = dist
         return min_ghost
+#--------------------------------------------------------------------------
     def nearest_coin(self):
         min_coin = None
         min_dist = Vector2D.magnitude(self.pacman.pos - Vector2D(self.coins[0].pos[0], self.coins[0].pos[1]))
@@ -33,7 +35,7 @@ class Environment:
                 min_coin = c
                 min_dist = dist
         return min_coin
-
+#--------------------------------------------------------------------------
     def make_key(self):
         s0 = 0
         s1 = 0
@@ -127,3 +129,10 @@ class Environment:
 
         key = [str(s0), str(s1), str(s2), str(s3), str(s4), str(s5), str(s6), str(s7), str(s8), str(s9)]
         return ''.join(key)
+#--------------------------------------------------------------------------
+    def add_key(self, k):
+        dict = {}
+        for direction in self.pacman.currentnode.directions:
+            #n  = 10 * random()
+            dict[(int(direction.x), int(direction.y))] = 0
+        self.qdictionary[k] = dict

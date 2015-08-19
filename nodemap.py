@@ -65,13 +65,19 @@ def game_start():
     ghosts = ghostgrp.create_ghostlist(maze_filename, coin_and_ghosts_filename, nodes)
 
     #pacman added
-    pacman = Pacman(nodes[1], (width,height), [nodes[1].position.x, nodes[1].position.y])
+    from random import randint
+    ind = randint(0, len(nodes)-1)
+    pacman = Pacman(nodes[ind], (width,height), [nodes[ind].position.x, nodes[ind].position.y])
     count=0
 #-------------------------------------------------------------------------------------------
+episodes = 0
 game_start()
-#env = Environment(pacman, ghosts, nodes, coins)
+env = Environment(pacman, ghosts, nodes, coins)
+learning_rate = 0.3
+discount = 0.8
 while True:
-    #print ghosts[0].currentnode.x, ghosts[0].currentnode.y
+    if episodes > 300:
+        sleep(0.1)
     #++++
     count+=1
     from random import randint
@@ -85,30 +91,57 @@ while True:
             exit()
     screen.blit(background, (0,0))
 
+    pacman.draw(screen)
+    ####moment before pacman update position
+    env.set_params(pacman, ghosts, nodes, coins)
+    k1 = env.make_key()
+    if k1 not in env.qdictionary:
+        env.add_key(k1)
+    ##########################################
     for t in tiles:
         t.draw(screen)
-
     for c in coins:
         c.draw(screen)
-
-    for c in coins:
-        if (pacman.coin_collide(c)):
-            pygame.mixer.music.load('sounds/sound.wav')
-            pygame.mixer.music.play(0)
-            coins.remove(c)
-            if (len(coins)==0):
-                game_start()
-
-    for g in ghosts:
-        if (pacman.ghost_collide(g)):
-            game_start()
-
     for ghost in ghosts:
         ghost.draw(screen)
         ghost.ghost_movement(pacman.currentnode, nodes, 'bfs')
 
-    pacman.draw(screen)
-    pacman.update(nodes)
+    #print k1, env.qdictionary[k1]
+    action = pacman.update(nodes, env.qdictionary, k1)
+
+    reward = -0.005
+    for c in coins:
+        if (pacman.coin_collide(c)):
+            pygame.mixer.music.load('sounds/sound.wav')
+            #pygame.mixer.music.play(0)
+            coins.remove(c)
+            reward += 3.5
+            if (len(coins)==0):
+                print 'winnnnnnnnnnnnnnnnn'
+                episodes += 1
+                game_start()
+
+    for g in ghosts:
+        if (pacman.ghost_collide(g)):
+            reward -= 4.5
+            episodes += 1
+            game_start()
+            print 'lost'
+
+    ####moment after pacman update position
+    env.set_params(pacman, ghosts, nodes, coins)
+    k2 = env.make_key()
+    if k2 not in env.qdictionary:
+        env.add_key(k2)
+    #print env.qdictionary
+    best_action_in_k2 = pacman.best_action(env.qdictionary, k2)
+    maxx = env.qdictionary[k2][best_action_in_k2]
+    expected = reward + (discount * maxx)
+    action_tuple = (int(action.x), int(action.y))
+    change = learning_rate * (expected - env.qdictionary[k1][action_tuple])
+    env.qdictionary[k1][action_tuple] += change
+    #############################################
+
     pygame.display.update()
 
 

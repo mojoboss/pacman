@@ -19,52 +19,24 @@ class Pacman(AbstractEntity):
         self.direction = Vector2D(0, 0)
         self.speed = 0.20
         self.currentnode = node
-
-     def update(self, nodelist):
-         #if pacman position is same as any node then detect for key pressing
-         node = self.find_node(nodelist)
-         if(node):
-             #in q learning no need to check available dirs, as only valid dirs are in the dict
-             # don't forget to write self.pos = node.position when node is updated.
-             self.currentnode = node
-             key_pressed = pygame.key.get_pressed()
-             if (key_pressed[K_UP] and UP in node.directions):
-                 self.pos = node.position
-                 self.direction = UP
-             elif (key_pressed[K_DOWN] and DOWN in node.directions):
-                 self.pos = node.position
-                 self.direction = DOWN
-             elif (key_pressed[K_LEFT] and LEFT in node.directions):
-                 self.pos = node.position
-                 self.direction = LEFT
-             elif (key_pressed[K_RIGHT] and RIGHT in node.directions):
-                 self.pos = node.position
-                 self.direction = RIGHT
-             #if no key is pressed and current direction is not available..
-             elif(self.direction not in node.directions):
-                 self.pos = node.position
-                 self.direction = Vector2D(0, 0)
-         #code to update position
-         self.pos += self.direction*self.speed
-
-         #code to move pacman in between nodes
-         key_pressed = pygame.key.get_pressed()
-         if (key_pressed[K_UP] and self.direction == DOWN or
-            key_pressed[K_DOWN] and self.direction == UP or
-            key_pressed[K_LEFT] and self.direction == RIGHT or
-            key_pressed[K_RIGHT] and self.direction == LEFT):
-            self.switchNodes()
-
-     #finds the  node just crossed by pacman
-     def find_node(self, nodelist):
-         for n in nodelist:
-            if Vector2D.magnitude(self.pos-n.position) <= 0.1:
-                return n
-         return None
-
-    #function to reverse the direction of pacman in between nodes
-     def switchNodes(self):
-         self.direction *= -1
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     def update(self, nodelist, qdictionary, key):
+         qdirection = self.best_action(qdictionary, key)
+         best_direction = Vector2D(qdirection)
+         index = self.currentnode.directions.index(best_direction)
+         self.currentnode = self.currentnode.neighbors[index]
+         self.pos = self.currentnode.position
+         return best_direction
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     #to find best action
+     def best_action(self, qdictionary, key):
+         maxi = -9999999999
+         direct = None
+         for k in qdictionary[key]:
+             if qdictionary[key][k] > maxi:
+                 maxi = qdictionary[key][k]
+                 direct = k
+         return direct
 
      #code to test interaction with coins using SAT(separating axis theorem)
      def coin_collide(self, other):
