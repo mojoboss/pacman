@@ -11,13 +11,14 @@ from coingroup import Coingroup
 from maze_env import Environment
 from time import sleep
 
+#method to get rows and cols from layout text file as a matrix
 def getRowCol(filename):
         layout = numpy.loadtxt(filename, dtype=str)
         c, r = layout.shape
         return r, c
 
 pygame.init()
-width, height = (16, 16)
+width, height = (32, 32)
 maze_filename = 'mazes/t1.txt'
 coin_and_ghosts_filename = 'mazes/t2.txt'
 r, c = getRowCol(maze_filename)
@@ -74,6 +75,9 @@ def game_start():
     pacman = Pacman(nodes[ind], (width,height), [nodes[ind].position.x, nodes[ind].position.y])
     count=0
 #-------------------------------------------------------------------------------------------
+# following are the training parameters, boolean training causes pacman speed to be very fast during
+# training phase and then visible speed after training when learning rate and discount factor are set
+# to 0. Episodes are the number of episodes for which training occurs.
 episodes = 0
 training = True
 game_start()
@@ -81,13 +85,13 @@ env = Environment(pacman, ghosts, nodes, coins)
 learning_rate = 0.3
 discount = 0.8
 while True:
-    if episodes > 150:
-        pacman.speed = 0.2
-        ghosts[0].speed = 0.1
+    if episodes > 200:
+        pacman.speed = 0.4
+        ghosts[0].speed = 0.2
         learning_rate = 0
         discount = 0
         training = False
-    #++++
+    #++++this part creates randomness in ghost's movement
     count+=1
     from random import randint
     if count == 20:
@@ -115,10 +119,10 @@ while True:
     for ghost in ghosts:
         ghost.draw(screen)
         ghost.ghost_movement(pacman.currentnode, nodes, 'bfs')
-
     #print k1, env.qdictionary[k1]
-    action = pacman.update(nodes, env.qdictionary, k1, training)
 
+    #training is boolean passed into update method. It keeps fast speed for pacman for for faster training.
+    action = pacman.update(nodes, env.qdictionary, k1, training)
     reward = -0.005
     for c in coins:
         if (pacman.coin_collide(c)):
@@ -126,17 +130,17 @@ while True:
             coins.remove(c)
             reward += 3.5
             if (len(coins)==0):
-                print str(episodes)+'  winnnnnnnn  '+ str(score)
+                print str(episodes)+'  won******** '+ str(score)
                 episodes += 1
                 game_start()
 
     for g in ghosts:
         if (pacman.ghost_collide(g)):
             pygame.mixer.music.load('sounds/sound.wav')
-            #pygame.mixer.music.play(0)
+            pygame.mixer.music.play(0)
             reward -= 4.5
             episodes += 1
-            print str(episodes)+'  lost  '+ str(score)
+            print str(episodes)+'  lost      '+ str(score)
             game_start()
     if action:
         ####moment after pacman update position

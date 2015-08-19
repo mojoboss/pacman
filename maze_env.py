@@ -36,6 +36,7 @@ class Environment:
                 min_dist = dist
         return min_coin
 #--------------------------------------------------------------------------
+    #This method creates a unique state space key which is differen for all state-spaces
     def make_key(self):
         s0 = 0
         s1 = 0

@@ -1,7 +1,7 @@
 
 __author__ = 'starlord'
-import pygame
-from pygame.locals import *
+
+
 from entity import AbstractEntity
 from vectors import Vector2D
 
@@ -53,12 +53,7 @@ class Pacman(AbstractEntity):
                  return direction
              return None
 
-         '''
-         index = self.currentnode.directions.index(best_direction)
-         self.currentnode = self.currentnode.neighbors[index]
-         self.pos = self.currentnode.position
-         return best_direction
-         '''
+
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      #to find best action
      def best_action(self, qdictionary, key):
@@ -72,8 +67,8 @@ class Pacman(AbstractEntity):
 
      #code to test interaction with coins using SAT(separating axis theorem)
      def coin_collide(self, other):
-        xcollide = axis_overlap(self.pos.x, self.dim[0], other.pos[0]-8, other.radius*2)
-        ycollide = axis_overlap(self.pos.y, self.dim[1], other.pos[1]-8, other.radius*2)
+        xcollide = axis_overlap(self.pos.x, self.dim[0], other.pos[0]-16, other.radius*2)
+        ycollide = axis_overlap(self.pos.y, self.dim[1], other.pos[1]-16, other.radius*2)
         return xcollide & ycollide
     #code to check interaction with ghosts
      def ghost_collide(self, other):
