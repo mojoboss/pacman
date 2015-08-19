@@ -38,6 +38,7 @@ score = None
 ghosts = None
 pacman = None
 count = None
+count_pacman_animate = None
 #-----------------
 def game_start():
     global tilegrp
@@ -51,7 +52,7 @@ def game_start():
     global pacman
     global count
     global score
-
+    global count_pacman_animate
     score = 0
     #code to add tiles in the screen
     tilegrp = Tilegroup(width, height)
@@ -74,6 +75,7 @@ def game_start():
     ind = randint(0, len(nodes)-1)
     pacman = Pacman(nodes[ind], (width,height), [nodes[ind].position.x, nodes[ind].position.y])
     count=0
+    count_pacman_animate = 0
 #-------------------------------------------------------------------------------------------
 # following are the training parameters, boolean training causes pacman speed to be very fast during
 # training phase and then visible speed after training when learning rate and discount factor are set
@@ -85,6 +87,11 @@ env = Environment(pacman, ghosts, nodes, coins)
 learning_rate = 0.3
 discount = 0.8
 while True:
+    #this counter controls pacman animation
+    count_pacman_animate += 1
+    if count_pacman_animate == 100:
+        count_pacman_animate = 0
+
     if episodes > 200:
         pacman.speed = 0.4
         ghosts[0].speed = 0.2
@@ -104,7 +111,7 @@ while True:
             exit()
     screen.blit(background, (0,0))
 
-    pacman.draw(screen)
+    pacman.draw(screen, count_pacman_animate)
 
     ####moment before pacman update position
     env.set_params(pacman, ghosts, nodes, coins)
@@ -157,7 +164,13 @@ while True:
         change = learning_rate * (expected - env.qdictionary[k1][action_tuple])
         env.qdictionary[k1][action_tuple] += change
         #############################################
-
+    '''
+    #+++++++++++++++++++++
+    img=pygame.image.load('ghos.bmp')
+    screen.blit(img,(0,0))
+    #pygame.display.flip()
+    #+++++++++++++++++++++
+    '''
     pygame.display.update()
 
 

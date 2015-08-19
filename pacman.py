@@ -4,7 +4,7 @@ __author__ = 'starlord'
 
 from entity import AbstractEntity
 from vectors import Vector2D
-
+import pygame
 
 UP = Vector2D(0, -1)
 DOWN = Vector2D(0, 1)
@@ -76,6 +76,25 @@ class Pacman(AbstractEntity):
         ycollide = axis_overlap(self.pos.y, self.dim[1], other.pos.y, other.dim[1])
         return xcollide & ycollide
 
+     #overriden method to draw animated pacman
+     #for some no of iterations(like 50), it draws a circle an then an arc
+     def draw(self, screen, count):
+        if count >0 and count <= 50:
+            pygame.draw.circle(screen, (255,255,0), (int(self.pos.x)+16, int(self.pos.y)+16), 16)
+        else:
+            if self.direction == Vector2D(1, 0):
+                pygame.draw.arc(screen, (255, 255, 0), (int(self.pos.x), int(self.pos.y), 32, 32),
+                    0.7853981634, 5.4977871438, 16)
+            elif self.direction == Vector2D(-1, 0):
+                pygame.draw.arc(screen, (255, 255, 0), (int(self.pos.x), int(self.pos.y), 32, 32),
+                     -2.356194490,  2.356194490, 16)
+            elif self.direction == Vector2D(0, -1):
+                pygame.draw.arc(screen, (255, 255, 0), (int(self.pos.x), int(self.pos.y), 32, 32),
+                     2.3561944902,  7.0685834706, 16)
+            elif self.direction == Vector2D(0, 1):
+                pygame.draw.arc(screen, (255, 255, 0), (int(self.pos.x), int(self.pos.y), 32, 32),
+                     -0.7853981634,  3.926990817, 16)
+
 #-------------------------------------------------------------------------------------------------------------
 #function to check collisions using SAT(separating axis theorem)
 def axis_overlap(p1, length1, p2, length2):
@@ -89,3 +108,5 @@ def axis_overlap(p1, length1, p2, length2):
     elif(p1==p2):
         collided = True
     return collided
+
+
