@@ -126,6 +126,8 @@ while True:
     reward = -0.005
     for c in coins:
         if (pacman.coin_collide(c)):
+            pygame.mixer.music.load('sounds/tick.mp3')
+            pygame.mixer.music.play(0)
             score += 10
             coins.remove(c)
             reward += 3.5
