@@ -17,16 +17,48 @@ class Pacman(AbstractEntity):
         AbstractEntity.__init__(self, dim, pos)
         self.COLOR = (255,255,0)
         self.direction = Vector2D(0, 0)
-        self.speed = 0.20
+        self.speed = 3.2
         self.currentnode = node
+        self.moving = False
+     #+++++
+     def find_node(self, nodelist):
+         for n in nodelist:
+            if Vector2D.magnitude(self.pos-n.position) <= 0.1:
+                return n
+         return None
+     #+++++
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-     def update(self, nodelist, qdictionary, key):
-         qdirection = self.best_action(qdictionary, key)
-         best_direction = Vector2D(qdirection)
+     def update(self, nodelist, qdictionary, key, training):
+         if training:
+             qdirection = self.best_action(qdictionary, key)
+             best_direction = Vector2D(qdirection)
+             index = self.currentnode.directions.index(best_direction)
+             self.currentnode = self.currentnode.neighbors[index]
+             self.pos = self.currentnode.position
+             return best_direction
+         else:
+             if self.moving == False:
+                 qdirection = self.best_action(qdictionary, key)
+                 best_direction = Vector2D(qdirection)
+                 self.direction = best_direction
+                 self.moving = True
+             direction = self.direction
+             if self.moving:
+                 self.pos += self.direction*self.speed
+             next_node = self.find_node(nodelist)
+             if next_node:
+                 self.currentnode = next_node
+                 self.pos = self.currentnode.position
+                 self.moving = False
+                 return direction
+             return None
+
+         '''
          index = self.currentnode.directions.index(best_direction)
          self.currentnode = self.currentnode.neighbors[index]
          self.pos = self.currentnode.position
          return best_direction
+         '''
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      #to find best action
      def best_action(self, qdictionary, key):
