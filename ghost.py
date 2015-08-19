@@ -2,6 +2,7 @@ __author__ = 'starlord'
 from entity import AbstractEntity
 from vectors import Vector2D
 from locatePacman import *
+import pygame
 
 UP = Vector2D(0,-1)
 DOWN = Vector2D(0,1)
@@ -82,3 +83,8 @@ class Ghost(AbstractEntity):
                 self.direction = node.directions[direct_index]
                 self.moving = True
             self.pos += self.direction*self.speed
+
+    #method to draw ghost image on the screen
+    def draw(self, screen):
+        img=pygame.image.load('images/ghos.bmp')
+        screen.blit(img, (self.pos.x, self.pos.y))

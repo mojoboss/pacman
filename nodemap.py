@@ -164,13 +164,13 @@ while True:
         change = learning_rate * (expected - env.qdictionary[k1][action_tuple])
         env.qdictionary[k1][action_tuple] += change
         #############################################
-    '''
+
     #+++++++++++++++++++++
-    img=pygame.image.load('ghos.bmp')
-    screen.blit(img,(0,0))
+    #img=pygame.image.load('ghos.bmp')
+    #screen.blit(img,(0,0))
     #pygame.display.flip()
     #+++++++++++++++++++++
-    '''
+
     pygame.display.update()
 
 
