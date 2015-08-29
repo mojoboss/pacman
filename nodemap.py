@@ -3,6 +3,7 @@ __author__ = 'starlord'
 import pygame
 from pygame.locals import *
 import numpy
+import math
 from nodegroup import NodeGroup
 from pacman import Pacman
 from tilegroup import Tilegroup
@@ -16,11 +17,18 @@ def getRowCol(filename):
         layout = numpy.loadtxt(filename, dtype=str)
         c, r = layout.shape
         return r, c
+#SOUNDS
+def play_tick():
+    pygame.mixer.music.load('sounds/tick.mp3')
+    pygame.mixer.music.play(0)
+def play_ghost():
+    pygame.mixer.music.load('sounds/sound.wav')
+    pygame.mixer.music.play(0)
 
 pygame.init()
 width, height = (32, 32)
-maze_filename = 'mazes/t1.txt'
-coin_and_ghosts_filename = 'mazes/t2.txt'
+maze_filename = 'mazes/tenbyten.txt'
+coin_and_ghosts_filename = 'mazes/tenbytencoin.txt'
 r, c = getRowCol(maze_filename)
 screen = pygame.display.set_mode((r*width, c*height), 0, 32)
 background = pygame.surface.Surface((r*width, c*height)).convert()
@@ -77,31 +85,33 @@ def game_start():
     count=0
     count_pacman_animate = 0
 #-------------------------------------------------------------------------------------------
-# following are the training parameters, boolean training causes pacman speed to be very fast during
+# following are the training parameters, boolean 'training' causes pacman speed to be very fast during
 # training phase and then visible speed after training when learning rate and discount factor are set
 # to 0. Episodes are the number of episodes for which training occurs.
 episodes = 0
 training = True
 game_start()
 env = Environment(pacman, ghosts, nodes, coins)
-learning_rate = 0.3
-discount = 0.8
+learning_rate = 0.5
+discount = 0.9
+trainEpisodes = 1000
+avg_scores_list = []
 while True:
     #this counter controls pacman animation
     count_pacman_animate += 1
     if count_pacman_animate == 100:
         count_pacman_animate = 0
-
-    if episodes > 200:
+    if episodes >= trainEpisodes:
         pacman.speed = 0.4
-        ghosts[0].speed = 0.2
+        for g in ghosts:
+            g.speed = 0.2
         learning_rate = 0
         discount = 0
         training = False
     #++++this part creates randomness in ghost's movement
     count+=1
     from random import randint
-    if count == 20:
+    if count == 200:
         i  = randint(0, len(ghosts)-1)
         ghosts[i].scatter_ghost()
         count = 0
@@ -109,7 +119,7 @@ while True:
     for event in pygame.event.get():
         if event.type == QUIT:
             exit()
-    screen.blit(background, (0,0))
+    screen.blit(background, (0, 0))
 
     pacman.draw(screen, count_pacman_animate)
 
@@ -130,26 +140,30 @@ while True:
 
     #training is boolean passed into update method. It keeps fast speed for pacman for for faster training.
     action = pacman.update(nodes, env.qdictionary, k1, training)
-    reward = -0.005
+    reward = -0.05
     for c in coins:
         if (pacman.coin_collide(c)):
-            pygame.mixer.music.load('sounds/tick.mp3')
-            pygame.mixer.music.play(0)
+            #play_tick()
             score += 10
             coins.remove(c)
             reward += 3.5
             if (len(coins)==0):
-                print str(episodes)+'  won******** '+ str(score)
+                print str(episodes)+'   **won**  '+ str(score)
                 episodes += 1
+                if training:
+                    learning_rate = 0.5 - (0.45*episodes)/trainEpisodes
+                avg_scores_list.append(score)
                 game_start()
 
     for g in ghosts:
         if (pacman.ghost_collide(g)):
-            pygame.mixer.music.load('sounds/sound.wav')
-            pygame.mixer.music.play(0)
+            #play_ghost()
             reward -= 4.5
             episodes += 1
-            print str(episodes)+'  lost      '+ str(score)
+            if training:
+                learning_rate = 0.5 - (0.45*episodes)/trainEpisodes
+            print str(episodes)+'    lost    '+ str(score)
+            avg_scores_list.append(score)
             game_start()
     if action:
         ####moment after pacman update position
@@ -165,13 +179,12 @@ while True:
         env.qdictionary[k1][action_tuple] += change
         #############################################
 
-    #+++++++++++++++++++++
-    #img=pygame.image.load('ghos.bmp')
-    #screen.blit(img,(0,0))
-    #pygame.display.flip()
-    #+++++++++++++++++++++
-
+    if len(avg_scores_list) >= 10:
+        print 'average score for last ten games = '+str(sum(avg_scores_list)/len(avg_scores_list))
+        print 'learning rate = '+ str(learning_rate)
+        del avg_scores_list[:]
     pygame.display.update()
+
 
 
 '''

@@ -21,7 +21,7 @@ class Environment:
         min_dist = Vector2D.magnitude(self.pacman.pos - self.ghosts[0].pos)
         for g in self.ghosts:
             dist = Vector2D.magnitude(self.pacman.pos - g.pos)
-            if dist <= 64.0 and dist <= min_dist:
+            if dist <= 128.0 and dist <= min_dist:
                 min_ghost = g
                 min_dist = dist
         return min_ghost
