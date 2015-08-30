@@ -20,14 +20,15 @@ class Pacman(AbstractEntity):
         self.speed = 3.2
         self.currentnode = node
         self.moving = False
-     #+++++
+        self.count_pacman_animate = 1
+
+     #finds the newrest node to assign it to pacman's currentnode
      def find_node(self, nodelist):
          for n in nodelist:
             if Vector2D.magnitude(self.pos-n.position) <= 0.1:
                 return n
          return None
-     #+++++
-#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
      def update(self, nodelist, qdictionary, key, training):
          if training:
              qdirection = self.best_action(qdictionary, key)
@@ -53,8 +54,6 @@ class Pacman(AbstractEntity):
                  return direction
              return None
 
-
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      #to find best action
      def best_action(self, qdictionary, key):
          maxi = -9999999999
@@ -78,8 +77,8 @@ class Pacman(AbstractEntity):
 
      #overriden method to draw animated pacman
      #for some no of iterations(like 50), it draws a circle an then an arc
-     def draw(self, screen, count):
-        if count >0 and count <= 50:
+     def draw(self, screen):
+        if self.count_pacman_animate >0 and self.count_pacman_animate <= 50:
             pygame.draw.circle(screen, (255,255,0), (int(self.pos.x)+16, int(self.pos.y)+16), 16)
         else:
             if self.direction == Vector2D(1, 0):
@@ -95,6 +94,11 @@ class Pacman(AbstractEntity):
                 pygame.draw.arc(screen, (255, 255, 0), (int(self.pos.x), int(self.pos.y), 32, 32),
                      -0.7853981634,  3.926990817, 16)
 
+     #method to animate pacman
+     def animate_pacman(self):
+         self.count_pacman_animate += 1
+         if self.count_pacman_animate == 100:
+             self.count_pacman_animate = 0
 #-------------------------------------------------------------------------------------------------------------
 #function to check collisions using SAT(separating axis theorem)
 def axis_overlap(p1, length1, p2, length2):

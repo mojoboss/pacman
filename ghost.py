@@ -18,7 +18,7 @@ class Ghost(AbstractEntity):
         self.currentnode = node
         self.moving = False
         self.scatter = False
-
+        self.rand_move_count = 1
     def move(self, pacnode, nodelist, alg):
         new_node = self.find_node(nodelist)
         if(new_node):
@@ -65,6 +65,13 @@ class Ghost(AbstractEntity):
         elif self.scatter == True:
             self.scatter = False
             return None
+
+    #Method for randomised ghost movement
+    def random_ghost_movement(self):
+        self.rand_move_count += 1
+        if self.rand_move_count == 200:
+            self.scatter_ghost()
+            self.rand_move_count = 0
 
     #without calling this method(and just calling move), just keeping the speed of ghost 0.4 also gives sacttering
     #effect as its too slow

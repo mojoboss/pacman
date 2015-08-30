@@ -3,7 +3,7 @@ __author__ = 'starlord'
 import pygame
 from pygame.locals import *
 import numpy
-import math
+
 from nodegroup import NodeGroup
 from pacman import Pacman
 from tilegroup import Tilegroup
@@ -27,8 +27,8 @@ def play_ghost():
 
 pygame.init()
 width, height = (32, 32)
-maze_filename = 'mazes/trickyClassic.txt'
-coin_and_ghosts_filename = 'mazes/trickyClassicCoins.txt'
+maze_filename = 'mazes/tenbyten.txt'
+coin_and_ghosts_filename = 'mazes/tenbytencoin.txt'
 r, c = getRowCol(maze_filename)
 screen = pygame.display.set_mode((r*width, c*height), 0, 32)
 background = pygame.surface.Surface((r*width, c*height)).convert()
@@ -45,8 +45,6 @@ ghostgrp = None
 score = None
 ghosts = None
 pacman = None
-count = None
-count_pacman_animate = None
 #-----------------
 def game_start():
     global tilegrp
@@ -58,9 +56,7 @@ def game_start():
     global ghostgrp
     global ghosts
     global pacman
-    global count
     global score
-    global count_pacman_animate
     score = 0
     #code to add tiles in the screen
     tilegrp = Tilegroup(width, height)
@@ -82,8 +78,6 @@ def game_start():
     from random import randint
     ind = randint(0, len(nodes)-1)
     pacman = Pacman(nodes[ind], (width,height), [nodes[ind].position.x, nodes[ind].position.y])
-    count=0
-    count_pacman_animate = 0
 #-------------------------------------------------------------------------------------------
 # following are the training parameters, boolean 'training' causes pacman speed to be very fast during
 # training phase and then visible speed after training when learning rate and discount factor are set
@@ -94,13 +88,10 @@ game_start()
 env = Environment(pacman, ghosts, nodes, coins)
 learning_rate = 0.5
 discount = 0.9
-trainEpisodes = 2000
+trainEpisodes = 200
 avg_scores_list = []
 while True:
-    #this counter controls pacman animation
-    count_pacman_animate += 1
-    if count_pacman_animate == 100:
-        count_pacman_animate = 0
+    #check whether training is finished or not
     if episodes >= trainEpisodes:
         pacman.speed = 0.8
         for g in ghosts:
@@ -108,20 +99,19 @@ while True:
         learning_rate = 0
         discount = 0
         training = False
-    #++++this part creates randomness in ghost's movement
-    count+=1
-    from random import randint
-    if count == 200:
-        i  = randint(0, len(ghosts)-1)
-        ghosts[i].scatter_ghost()
-        count = 0
-    #++++
+
+    #this animates pacman
+    pacman.animate_pacman()
+    #this part creates randomness in ghost's movement
+    for g in ghosts:
+        g.random_ghost_movement()
+
     for event in pygame.event.get():
         if event.type == QUIT:
             exit()
     screen.blit(background, (0, 0))
 
-    pacman.draw(screen, count_pacman_animate)
+    pacman.draw(screen)
 
     ####moment before pacman update position
     env.set_params(pacman, ghosts, nodes, coins)
