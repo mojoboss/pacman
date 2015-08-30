@@ -27,8 +27,8 @@ def play_ghost():
 
 pygame.init()
 width, height = (32, 32)
-maze_filename = 'mazes/tenbyten.txt'
-coin_and_ghosts_filename = 'mazes/tenbytencoin.txt'
+maze_filename = 'mazes/trickyClassic.txt'
+coin_and_ghosts_filename = 'mazes/trickyClassicCoins.txt'
 r, c = getRowCol(maze_filename)
 screen = pygame.display.set_mode((r*width, c*height), 0, 32)
 background = pygame.surface.Surface((r*width, c*height)).convert()
@@ -94,7 +94,7 @@ game_start()
 env = Environment(pacman, ghosts, nodes, coins)
 learning_rate = 0.5
 discount = 0.9
-trainEpisodes = 1000
+trainEpisodes = 2000
 avg_scores_list = []
 while True:
     #this counter controls pacman animation
@@ -102,9 +102,9 @@ while True:
     if count_pacman_animate == 100:
         count_pacman_animate = 0
     if episodes >= trainEpisodes:
-        pacman.speed = 0.4
+        pacman.speed = 0.8
         for g in ghosts:
-            g.speed = 0.2
+            g.speed = 0.4
         learning_rate = 0
         discount = 0
         training = False
