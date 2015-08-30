@@ -134,6 +134,6 @@ class Environment:
     def add_key(self, k):
         dict = {}
         for direction in self.pacman.currentnode.directions:
-            #n  = 10 * random()
-            dict[(int(direction.x), int(direction.y))] = 0
+            n = random()
+            dict[(int(direction.x), int(direction.y))] = n
         self.qdictionary[k] = dict

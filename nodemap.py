@@ -80,24 +80,24 @@ def game_start():
     pacman = Pacman(nodes[ind], (width,height), [nodes[ind].position.x, nodes[ind].position.y])
 #-------------------------------------------------------------------------------------------
 # following are the training parameters, boolean 'training' causes pacman speed to be very fast during
-# training phase and then visible speed after training when learning rate and discount factor are set
+# training phase and then visible speed after training when learning rate and DISCOUNT factor are set
 # to 0. Episodes are the number of episodes for which training occurs.
 episodes = 0
 training = True
 game_start()
 env = Environment(pacman, ghosts, nodes, coins)
-learning_rate = 0.5
-discount = 0.9
-trainEpisodes = 200
+LEARNING_RATE = 0.5
+DISCOUNT = 0.9
+TRAIN_EPISODES = 200
 avg_scores_list = []
 while True:
     #check whether training is finished or not
-    if episodes >= trainEpisodes:
+    if episodes >= TRAIN_EPISODES:
         pacman.speed = 0.8
         for g in ghosts:
             g.speed = 0.4
-        learning_rate = 0
-        discount = 0
+        LEARNING_RATE = 0
+        DISCOUNT = 0
         training = False
 
     #this animates pacman
@@ -141,7 +141,7 @@ while True:
                 print str(episodes)+'   **won**  '+ str(score)
                 episodes += 1
                 if training:
-                    learning_rate = 0.5 - (0.45*episodes)/trainEpisodes
+                    LEARNING_RATE = 0.5 - (0.45*episodes)/TRAIN_EPISODES
                 avg_scores_list.append(score)
                 game_start()
 
@@ -151,7 +151,7 @@ while True:
             reward -= 4.5
             episodes += 1
             if training:
-                learning_rate = 0.5 - (0.45*episodes)/trainEpisodes
+                LEARNING_RATE = 0.5 - (0.45*episodes)/TRAIN_EPISODES
             print str(episodes)+'    lost    '+ str(score)
             avg_scores_list.append(score)
             game_start()
@@ -163,15 +163,15 @@ while True:
             env.add_key(k2)
         best_action_in_k2 = pacman.best_action(env.qdictionary, k2)
         maxx = env.qdictionary[k2][best_action_in_k2]
-        expected = reward + (discount * maxx)
+        expected = reward + (DISCOUNT * maxx)
         action_tuple = (int(action.x), int(action.y))
-        change = learning_rate * (expected - env.qdictionary[k1][action_tuple])
+        change = LEARNING_RATE * (expected - env.qdictionary[k1][action_tuple])
         env.qdictionary[k1][action_tuple] += change
         #############################################
 
     if len(avg_scores_list) >= 10:
         print 'average score for last ten games = '+str(sum(avg_scores_list)/len(avg_scores_list))
-        print 'learning rate = '+ str(learning_rate)
+        print 'learning rate = '+ str(LEARNING_RATE)
         del avg_scores_list[:]
     pygame.display.update()
 
