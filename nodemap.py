@@ -27,8 +27,8 @@ def play_ghost():
 
 pygame.init()
 width, height = (32, 32)
-maze_filename = 'mazes/tenbyten.txt'
-coin_and_ghosts_filename = 'mazes/tenbytencoin.txt'
+maze_filename = 'mazes/trickyClassic.txt'
+coin_and_ghosts_filename = 'mazes/trickyClassicCoins.txt'
 r, c = getRowCol(maze_filename)
 screen = pygame.display.set_mode((r*width, c*height), 0, 32)
 background = pygame.surface.Surface((r*width, c*height)).convert()
@@ -45,6 +45,9 @@ ghostgrp = None
 score = None
 ghosts = None
 pacman = None
+pacman1 = None
+pacman2 = None
+pacman3 = None
 #-----------------
 def game_start():
     global tilegrp
@@ -56,6 +59,9 @@ def game_start():
     global ghostgrp
     global ghosts
     global pacman
+    global pacman1
+    global pacman2
+    global pacman3
     global score
     score = 0
     #code to add tiles in the screen
@@ -77,7 +83,13 @@ def game_start():
     #pacman added
     from random import randint
     ind = randint(0, len(nodes)-1)
-    pacman = Pacman(nodes[ind], (width,height), [nodes[ind].position.x, nodes[ind].position.y])
+    ind1 = randint(0, len(nodes)-1)
+    ind2 = randint(0, len(nodes)-1)
+    ind3 = randint(0, len(nodes)-1)
+    pacman =  Pacman(nodes[ind], (width,height), [nodes[ind].position.x, nodes[ind].position.y])
+    pacman1 = Pacman(nodes[ind1], (width,height), [nodes[ind].position.x, nodes[ind].position.y])
+    pacman2 = Pacman(nodes[ind2], (width,height), [nodes[ind].position.x, nodes[ind].position.y])
+    pacman3 = Pacman(nodes[ind3], (width,height), [nodes[ind].position.x, nodes[ind].position.y])
 #-------------------------------------------------------------------------------------------
 # following are the training parameters, boolean 'training' causes pacman speed to be very fast during
 # training phase and then visible speed after training when learning rate and DISCOUNT factor are set
@@ -102,6 +114,10 @@ while True:
 
     #this animates pacman
     pacman.animate_pacman()
+    if training:
+        pacman1.animate_pacman()
+        pacman2.animate_pacman()
+        pacman3.animate_pacman()
     #this part creates randomness in ghost's movement
     for g in ghosts:
         g.random_ghost_movement()
@@ -110,15 +126,11 @@ while True:
         if event.type == QUIT:
             exit()
     screen.blit(background, (0, 0))
-
     pacman.draw(screen)
-
-    ####moment before pacman update position
-    env.set_params(pacman, ghosts, nodes, coins)
-    k1 = env.make_key()
-    if k1 not in env.qdictionary:
-        env.add_key(k1)
-    ##########################################
+    if training:
+        pacman1.draw(screen)
+        pacman2.draw(screen)
+        pacman3.draw(screen)
     for t in tiles:
         t.draw(screen)
     for c in coins:
@@ -126,6 +138,13 @@ while True:
     for ghost in ghosts:
         ghost.draw(screen)
         ghost.ghost_movement(pacman.currentnode, nodes, 'bfs')
+
+    ####moment before pacman update position
+    env.set_params(pacman, ghosts, nodes, coins)
+    k1 = env.make_key()
+    if k1 not in env.qdictionary:
+        env.add_key(k1)
+    ##########################################
     #print k1, env.qdictionary[k1]
 
     #training is boolean passed into update method. It keeps fast speed for pacman for for faster training.
@@ -169,6 +188,150 @@ while True:
         env.qdictionary[k1][action_tuple] += change
         #############################################
 
+    if training:
+        ####moment before pacman update position
+        env.set_params(pacman1, ghosts, nodes, coins)
+        k1 = env.make_key()
+        if k1 not in env.qdictionary:
+            env.add_key(k1)
+        ##########################################
+        #print k1, env.qdictionary[k1]
+
+        #training is boolean passed into update method. It keeps fast speed for pacman for for faster training.
+        action = pacman1.update(nodes, env.qdictionary, k1, training)
+        reward = -0.05
+        for c in coins:
+            if (pacman1.coin_collide(c)):
+                #play_tick()
+                score += 10
+                coins.remove(c)
+                reward += 3.5
+                if (len(coins)==0):
+                    print str(episodes)+'   **won**  '+ str(score)
+                    episodes += 1
+                    if training:
+                        LEARNING_RATE = 0.5 - (0.45*episodes)/TRAIN_EPISODES
+                    avg_scores_list.append(score)
+                    game_start()
+
+        for g in ghosts:
+            if (pacman1.ghost_collide(g)):
+                #play_ghost()
+                reward -= 4.5
+                episodes += 1
+                if training:
+                    LEARNING_RATE = 0.5 - (0.45*episodes)/TRAIN_EPISODES
+                print str(episodes)+'    lost    '+ str(score)
+                avg_scores_list.append(score)
+                game_start()
+        if action:
+            ####moment after pacman update position
+            env.set_params(pacman1, ghosts, nodes, coins)
+            k2 = env.make_key()
+            if k2 not in env.qdictionary:
+                env.add_key(k2)
+            best_action_in_k2 = pacman1.best_action(env.qdictionary, k2)
+            maxx = env.qdictionary[k2][best_action_in_k2]
+            expected = reward + (DISCOUNT * maxx)
+            action_tuple = (int(action.x), int(action.y))
+            change = LEARNING_RATE * (expected - env.qdictionary[k1][action_tuple])
+            env.qdictionary[k1][action_tuple] += change
+        #------------------------------------------------------------------------------------------
+        ####moment before pacman update position
+        env.set_params(pacman2, ghosts, nodes, coins)
+        k1 = env.make_key()
+        if k1 not in env.qdictionary:
+            env.add_key(k1)
+        ##########################################
+        #print k1, env.qdictionary[k1]
+
+        #training is boolean passed into update method. It keeps fast speed for pacman for for faster training.
+        action = pacman2.update(nodes, env.qdictionary, k1, training)
+        reward = -0.05
+        for c in coins:
+            if (pacman2.coin_collide(c)):
+                #play_tick()
+                score += 10
+                coins.remove(c)
+                reward += 3.5
+                if (len(coins)==0):
+                    print str(episodes)+'   **won**  '+ str(score)
+                    episodes += 1
+                    if training:
+                        LEARNING_RATE = 0.5 - (0.45*episodes)/TRAIN_EPISODES
+                    avg_scores_list.append(score)
+                    game_start()
+
+        for g in ghosts:
+            if (pacman2.ghost_collide(g)):
+                #play_ghost()
+                reward -= 4.5
+                episodes += 1
+                if training:
+                    LEARNING_RATE = 0.5 - (0.45*episodes)/TRAIN_EPISODES
+                print str(episodes)+'    lost    '+ str(score)
+                avg_scores_list.append(score)
+                game_start()
+        if action:
+            ####moment after pacman update position
+            env.set_params(pacman2, ghosts, nodes, coins)
+            k2 = env.make_key()
+            if k2 not in env.qdictionary:
+                env.add_key(k2)
+            best_action_in_k2 = pacman2.best_action(env.qdictionary, k2)
+            maxx = env.qdictionary[k2][best_action_in_k2]
+            expected = reward + (DISCOUNT * maxx)
+            action_tuple = (int(action.x), int(action.y))
+            change = LEARNING_RATE * (expected - env.qdictionary[k1][action_tuple])
+            env.qdictionary[k1][action_tuple] += change
+        #-----------------------------------------------------------------------------------
+        ####moment before pacman update position
+        env.set_params(pacman3, ghosts, nodes, coins)
+        k1 = env.make_key()
+        if k1 not in env.qdictionary:
+            env.add_key(k1)
+        ##########################################
+        #print k1, env.qdictionary[k1]
+
+        #training is boolean passed into update method. It keeps fast speed for pacman for for faster training.
+        action = pacman3.update(nodes, env.qdictionary, k1, training)
+        reward = -0.05
+        for c in coins:
+            if (pacman3.coin_collide(c)):
+                #play_tick()
+                score += 10
+                coins.remove(c)
+                reward += 3.5
+                if (len(coins)==0):
+                    print str(episodes)+'   **won**  '+ str(score)
+                    episodes += 1
+                    if training:
+                        LEARNING_RATE = 0.5 - (0.45*episodes)/TRAIN_EPISODES
+                    avg_scores_list.append(score)
+                    game_start()
+
+        for g in ghosts:
+            if (pacman3.ghost_collide(g)):
+                #play_ghost()
+                reward -= 4.5
+                episodes += 1
+                if training:
+                    LEARNING_RATE = 0.5 - (0.45*episodes)/TRAIN_EPISODES
+                print str(episodes)+'    lost    '+ str(score)
+                avg_scores_list.append(score)
+                game_start()
+        if action:
+            ####moment after pacman update position
+            env.set_params(pacman3, ghosts, nodes, coins)
+            k2 = env.make_key()
+            if k2 not in env.qdictionary:
+                env.add_key(k2)
+            best_action_in_k2 = pacman3.best_action(env.qdictionary, k2)
+            maxx = env.qdictionary[k2][best_action_in_k2]
+            expected = reward + (DISCOUNT * maxx)
+            action_tuple = (int(action.x), int(action.y))
+            change = LEARNING_RATE * (expected - env.qdictionary[k1][action_tuple])
+            env.qdictionary[k1][action_tuple] += change
     if len(avg_scores_list) >= 10:
         print 'average score for last ten games = '+str(sum(avg_scores_list)/len(avg_scores_list))
         print 'learning rate = '+ str(LEARNING_RATE)
