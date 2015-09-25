@@ -3,7 +3,7 @@ __author__ = 'starlord'
 import pygame
 from pygame.locals import *
 import numpy
-
+import argparse
 from nodegroup import NodeGroup
 from pacman import Pacman
 from tilegroup import Tilegroup
@@ -12,11 +12,22 @@ from coingroup import Coingroup
 from maze_env import Environment
 from time import sleep
 
+#Method to get command line agruments
+def Parse():
+    parser = argparse.ArgumentParser(description = 'Take input parameters for training')
+    parser.add_argument('-t', '--episodes', type=int, default= 200, help='Defines the number of training episodes')
+    parser.add_argument('-m', '--maze', type=str, default= 'tenbyten', help='set the maze for training')
+    args = parser.parse_args()
+    return args
+args = Parse()
+maze = args.maze
+
 #method to get rows and cols from layout text file as a matrix
 def getRowCol(filename):
         layout = numpy.loadtxt(filename, dtype=str)
         c, r = layout.shape
         return r, c
+
 #SOUNDS
 def play_tick():
     pygame.mixer.music.load('sounds/tick.mp3')
@@ -27,8 +38,8 @@ def play_ghost():
 
 pygame.init()
 width, height = (32, 32)
-maze_filename = 'mazes/trickyClassic.txt'
-coin_and_ghosts_filename = 'mazes/trickyClassicCoins.txt'
+maze_filename = 'mazes/'+maze+'.txt'
+coin_and_ghosts_filename = 'mazes/'+maze+'Coin.txt'
 r, c = getRowCol(maze_filename)
 screen = pygame.display.set_mode((r*width, c*height), 0, 32)
 background = pygame.surface.Surface((r*width, c*height)).convert()
@@ -100,7 +111,7 @@ game_start()
 env = Environment(pacman, ghosts, nodes, coins)
 LEARNING_RATE = 0.5
 DISCOUNT = 0.9
-TRAIN_EPISODES = 200
+TRAIN_EPISODES = args.episodes
 avg_scores_list = []
 while True:
     #check whether training is finished or not
