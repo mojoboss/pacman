@@ -10,7 +10,6 @@ from tilegroup import Tilegroup
 from ghostgroup import Ghostgroup
 from coingroup import Coingroup
 from maze_env import Environment
-from time import sleep
 
 #Method to get command line agruments
 def Parse():
@@ -154,7 +153,7 @@ if args.mode:
             ghost.draw(screen)
             ghost.ghost_movement(pacman.currentnode, nodes, 'bfs')
 
-        ####moment before pacman update position
+        #moment before pacman update position
         env.set_params(pacman, ghosts, nodes, coins)
         k1 = env.make_key()
         if k1 not in env.qdictionary:
@@ -240,7 +239,7 @@ if args.mode:
                     avg_scores_list.append(score)
                     game_start()
             if action:
-                ####moment after pacman update position
+                #moment after pacman update position
                 env.set_params(pacman1, ghosts, nodes, coins)
                 k2 = env.make_key()
                 if k2 not in env.qdictionary:
@@ -402,11 +401,11 @@ else:
                 coins.remove(c)
                 reward += 3.5
                 if (len(coins)==0):
-                    print str(score)
-                    #print str(episodes)+'   **won**  '+ str(score)
+                    #print str(score)
+                    print str(episodes)+'   **won**  '+ str(score)
                     episodes += 1
                     if training:
-                        learning_rate = 0.5 - (0.45*episodes)/TRAIN_EPISODES
+                        LEARNING_RATE = 0.5 - (0.45*episodes)/TRAIN_EPISODES
                     avg_scores_list.append(score)
                     game_start()
 
@@ -416,9 +415,9 @@ else:
                 reward -= 4.5
                 episodes += 1
                 if training:
-                    learning_rate = 0.5 - (0.45*episodes)/TRAIN_EPISODES
-                print str(score)
-                #print str(episodes)+'    lost    '+ str(score)
+                    LEARNING_RATE = 0.5 - (0.45*episodes)/TRAIN_EPISODES
+                #print str(score)
+                print str(episodes)+'    lost    '+ str(score)
                 avg_scores_list.append(score)
                 game_start()
         if action:
