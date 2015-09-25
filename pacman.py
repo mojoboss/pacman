@@ -5,6 +5,7 @@ __author__ = 'starlord'
 from entity import AbstractEntity
 from vectors import Vector2D
 import pygame
+from pygame.locals import *
 
 UP = Vector2D(0, -1)
 DOWN = Vector2D(0, 1)
@@ -99,6 +100,41 @@ class Pacman(AbstractEntity):
          self.count_pacman_animate += 1
          if self.count_pacman_animate == 100:
              self.count_pacman_animate = 0
+
+    #method for manually controlling pacman
+     def update_manual(self, nodelist):
+         #if pacman position is same as any node then detect for key pressing
+         node = self.find_node(nodelist)
+         if(node):
+             self.currentnode = node
+             key_pressed = pygame.key.get_pressed()
+             if (key_pressed[K_UP] and UP in node.directions):
+                 self.pos = node.position
+                 self.direction = UP
+             elif (key_pressed[K_DOWN] and DOWN in node.directions):
+                 self.pos = node.position
+                 self.direction = DOWN
+             elif (key_pressed[K_LEFT] and LEFT in node.directions):
+                 self.pos = node.position
+                 self.direction = LEFT
+             elif (key_pressed[K_RIGHT] and RIGHT in node.directions):
+                 self.pos = node.position
+                 self.direction = RIGHT
+             #if no key is pressed and current direction is not available..
+             elif(self.direction not in node.directions):
+                 self.pos = node.position
+                 self.direction = Vector2D(0, 0)
+
+         #code to update position
+         self.pos += self.direction*self.speed
+
+         #code to move pacman in between nodes
+         #key_pressed = pygame.key.get_pressed()
+         #if (key_pressed[K_UP] and self.direction == DOWN or
+         #   key_pressed[K_DOWN] and self.direction == UP or
+         #   key_pressed[K_LEFT] and self.direction == RIGHT or
+         #   key_pressed[K_RIGHT] and self.direction == LEFT):
+         #   self.switchNodes()
 #-------------------------------------------------------------------------------------------------------------
 #function to check collisions using SAT(separating axis theorem)
 def axis_overlap(p1, length1, p2, length2):

@@ -17,6 +17,7 @@ def Parse():
     parser.add_argument('-t', '--episodes', type=int, default= 200, help='Defines the number of training episodes')
     parser.add_argument('-m', '--maze', type=str, default= 'tenbyten', help='set the maze for training')
     parser.add_argument('-mode', '--mode', type=bool, default= False, help='set True for multi-agent use')
+    parser.add_argument('-g', '--manual', type=bool, default= False, help='set True for manual controls')
     args = parser.parse_args()
     return args
 args = Parse()
@@ -101,6 +102,12 @@ def game_start():
     pacman1 = Pacman(nodes[ind1], (width,height), [nodes[ind].position.x, nodes[ind].position.y])
     pacman2 = Pacman(nodes[ind2], (width,height), [nodes[ind].position.x, nodes[ind].position.y])
     pacman3 = Pacman(nodes[ind3], (width,height), [nodes[ind].position.x, nodes[ind].position.y])
+
+    #if we are controlling pacman manually
+    if args.manual:
+        pacman.speed = 0.8
+        for g in ghosts:
+            g.speed = 0.4
 #-------------------------------------------------------------------------------------------
 # following are the training parameters, boolean 'training' causes pacman speed to be very fast during
 # training phase and then visible speed after training when learning rate and DISCOUNT factor are set
@@ -114,8 +121,42 @@ DISCOUNT = 0.9
 TRAIN_EPISODES = args.episodes
 avg_scores_list = []
 
+#For manual controls, this code block gets executed
+if args.manual:
+    pacman.speed = 0.8
+    for g in ghosts:
+        g.speed = 0.4
+    while True:
+        pacman.animate_pacman()
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                exit()
+        screen.blit(background, (0, 0))
+        pacman.draw(screen)
+
+        for t in tiles:
+            t.draw(screen)
+        for c in coins:
+            c.draw(screen)
+        for ghost in ghosts:
+            ghost.draw(screen)
+            ghost.move(pacman.currentnode, nodes, 'bfs')
+        pacman.update_manual(nodes)
+        for c in coins:
+            if (pacman.coin_collide(c)):
+                play_tick()
+                coins.remove(c)
+                if (len(coins)==0):
+                    game_start()
+
+        for g in ghosts:
+            if (pacman.ghost_collide(g)):
+                play_ghost()
+                game_start()
+        pygame.display.update()
+
 #This is the conditional for multi-agent use
-if args.mode:
+if args.mode and not args.manual:
     while True:
         #check whether training is finished or not
         if episodes >= TRAIN_EPISODES:
