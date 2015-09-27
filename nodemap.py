@@ -166,7 +166,6 @@ if args.mode and not args.manual:
             LEARNING_RATE = 0
             DISCOUNT = 0
             training = False
-
         #this animates pacman
         pacman.animate_pacman()
         if training:
@@ -404,6 +403,16 @@ else:
             learning_rate = 0
             DISCOUNT = 0
             training = False
+            #dumping training data to a pickle file
+            import pickle
+            dic = env.qdictionary
+            if args.maze == 'trickyClassic':
+                with open('trickyClassic.pickle', 'wb') as handle:
+                    pickle.dump(dic, handle)
+            else:
+                with open('tenbyten.pickle', 'wb') as handle:
+                    pickle.dump(dic, handle)
+
         #this animates pacman
         pacman.animate_pacman()
         #this part creates randomness in ghost's movement
