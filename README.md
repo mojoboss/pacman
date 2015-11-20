@@ -1,7 +1,5 @@
-
+<img src="https://cloud.githubusercontent.com/assets/8466448/11294325/8035ab36-8f88-11e5-9f78-9afdf6ffcda9.png" width="90%"></img>
 <h1>Implementing  a simple pacman game in python using Pygame library and then using machine learning to train an autonomous pacman agent</h1>
-<img src = "https://goo.gl/Q5XHkd"/>
-
 <h3>1. To run the program, pygame graphics library is required. To install pygame, follow 
 <a href = "http://www.pygame.org/download.shtml">this</a> link. <br/>
 2. I have used python2.7 in this project. To install python, click   <a href = "https://www.python.org/downloads/">here.</a><br/>
