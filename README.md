@@ -9,6 +9,8 @@
 <h4> 
 <ul>
 <li>cd pacman</li>
+<li>python nodemap.py -m</li>
+Use this command for manually controlling the pacman.
 <li>python nodemap.py -t 200 -m tenbyten </li>
 This will set the number of training episodes to 200, on a medium size maze called 'tenbyten'<br/>
 To set the number of training episodes, use -t [enter no of episodes] <br/>
